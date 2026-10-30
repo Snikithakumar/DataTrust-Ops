@@ -331,3 +331,11 @@ DataTrustOps/
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## Project Demo
+
+Watch the DataTrust Ops demonstration video:
+
+[Watch Demo Video](https://github.com/Snikithakumar/DataTrust-Ops/blob/main/demo/DataTrustOps_Demo.mp4)
+
+Duration: 2 minutes 59 seconds.
