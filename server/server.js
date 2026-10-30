@@ -1,17 +1,21 @@
 require('dotenv').config();
 const http = require('http');
+const { configureDNS, connectDB } = require('./src/config/db');
+
+// Ensure DNS resolution is configured prior to any other network operation
+configureDNS();
+
 const app = require('./src/app');
-const { connectDB } = require('./src/config/db');
 const { seedDatabaseIfEmpty } = require('./src/services/seedService');
 
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  // Attempt MongoDB connection
   console.log('[DataTrust Ops] Initializing server...');
   const dbConnected = await connectDB();
 
   if (dbConnected) {
+    console.log('[DataTrust Ops] Database persistence active.');
     await seedDatabaseIfEmpty();
   } else {
     console.warn('[DataTrust Ops] Running with resilient in-memory simulated store.');

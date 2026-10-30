@@ -8,20 +8,19 @@ import {
   Tooltip,
   CartesianGrid,
   BarChart,
-  Bar,
-  Legend
+  Bar
 } from 'recharts';
 import { TrendingUp, Activity } from 'lucide-react';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-navy-950 border border-slate-700/80 p-3 rounded-lg shadow-xl text-xs font-mono space-y-1">
-        <p className="text-slate-300 font-bold border-b border-slate-800 pb-1">{label}</p>
+      <div className="bg-[#F7F4ED] border border-[#D8D2C7] p-3 rounded-lg shadow-md text-xs font-mono space-y-1">
+        <p className="text-[#17263F] font-semibold border-b border-[#D8D2C7] pb-1">{label}</p>
         {payload.map((entry, index) => (
-          <p key={index} style={{ color: entry.color }} className="flex justify-between gap-4">
-            <span className="capitalize">{entry.name}:</span>
-            <span className="font-bold">{entry.value}{entry.unit || '%'}</span>
+          <p key={index} style={{ color: entry.color }} className="flex justify-between gap-4 font-sans text-xs">
+            <span className="capitalize text-[#667085]">{entry.name}:</span>
+            <span className="font-semibold text-[#253248]">{entry.value}{entry.unit || '%'}</span>
           </p>
         ))}
       </div>
@@ -43,38 +42,38 @@ export default function ReliabilityCharts({ qualityHistory = [], pipelinePerform
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Quality Score Trend Over Time */}
-      <div className="bg-navy-900 border border-slate-800/90 rounded-xl p-5 shadow-lg shadow-navy-950/40">
+      <div className="bg-[#F7F4ED] border border-[#D8D2C7] rounded-xl p-5 shadow-card">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-teal-400" />
-            <h3 className="text-sm font-semibold text-slate-100 font-mono">
-              Reliability Score Trend (24h)
+            <TrendingUp className="w-4 h-4 text-[#167D80]" />
+            <h3 className="text-sm font-semibold text-[#17263F]">
+              Data Quality Trends (24h)
             </h3>
           </div>
-          <span className="text-[11px] font-mono text-slate-400">Target SLA: &ge; 75%</span>
+          <span className="text-xs text-[#667085]">Target SLA: &ge; 75%</span>
         </div>
 
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#14b8a6" stopOpacity={0.0} />
+                <linearGradient id="scoreWarmGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8FD2C4" stopOpacity={0.6} />
+                  <stop offset="95%" stopColor="#8FD2C4" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="timestamp" stroke="#64748b" tick={{ fontSize: 11 }} />
-              <YAxis domain={[40, 100]} stroke="#64748b" tick={{ fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E9E5DC" />
+              <XAxis dataKey="timestamp" stroke="#8A94A6" tick={{ fontSize: 11, fill: '#667085' }} />
+              <YAxis domain={[40, 100]} stroke="#8A94A6" tick={{ fontSize: 11, fill: '#667085' }} />
               <Tooltip content={<CustomTooltip />} />
               <Area
                 type="monotone"
                 dataKey="score"
                 name="Quality Score"
-                stroke="#14b8a6"
+                stroke="#167D80"
                 strokeWidth={2.5}
                 fillOpacity={1}
-                fill="url(#scoreGradient)"
+                fill="url(#scoreWarmGradient)"
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -82,25 +81,25 @@ export default function ReliabilityCharts({ qualityHistory = [], pipelinePerform
       </div>
 
       {/* Pipeline Execution Duration Performance */}
-      <div className="bg-navy-900 border border-slate-800/90 rounded-xl p-5 shadow-lg shadow-navy-950/40">
+      <div className="bg-[#F7F4ED] border border-[#D8D2C7] rounded-xl p-5 shadow-card">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-semibold text-slate-100 font-mono">
+            <Activity className="w-4 h-4 text-[#167D80]" />
+            <h3 className="text-sm font-semibold text-[#17263F]">
               Pipeline Execution Durations (ms)
             </h3>
           </div>
-          <span className="text-[11px] font-mono text-slate-400">Latency Benchmarks</span>
+          <span className="text-xs text-[#667085]">Latency Benchmarks</span>
         </div>
 
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={pipelinePerformance} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 10 }} />
-              <YAxis stroke="#64748b" tick={{ fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E9E5DC" />
+              <XAxis dataKey="name" stroke="#8A94A6" tick={{ fontSize: 10, fill: '#667085' }} />
+              <YAxis stroke="#8A94A6" tick={{ fontSize: 11, fill: '#667085' }} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="durationMs" name="Duration" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="durationMs" name="Duration (ms)" fill="#17263F" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

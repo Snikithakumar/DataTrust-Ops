@@ -8,8 +8,8 @@ const getHealth = (req, res) => {
   const status = {
     status: dbStatus.connected ? 'HEALTHY' : 'DEGRADED',
     message: dbStatus.connected
-      ? 'All systems operational with MongoDB persistence.'
-      : 'API operational with in-memory fallback. MongoDB disconnected — see docs/MONGODB_ATLAS_GUIDE.md to enable persistence.',
+      ? `All systems operational with ${dbStatus.mode} persistence.`
+      : `API operational with resilient in-memory fallback. MongoDB persistence offline (${dbStatus.lastError || 'disconnected'}).`,
     timestamp: new Date().toISOString(),
     uptimeSeconds,
     nodeVersion: process.version,

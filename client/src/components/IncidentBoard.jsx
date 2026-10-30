@@ -5,11 +5,11 @@ import {
   CheckCircle,
   Clock,
   ShieldAlert,
-  ArrowRight,
-  Filter,
   Check,
   Copy,
-  ExternalLink
+  Info,
+  Layers,
+  FileSpreadsheet
 } from 'lucide-react';
 import Badge from './UI/Badge';
 import Button from './UI/Button';
@@ -77,43 +77,45 @@ export default function IncidentBoard({
   };
 
   return (
-    <div className="bg-navy-900 border border-slate-800/90 rounded-xl p-6 shadow-xl shadow-navy-950/40 space-y-6">
+    <div className="bg-[#F7F4ED] border border-[#D8D2C7] rounded-xl p-6 shadow-card space-y-6">
       {/* Header and Filters */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-[#D8D2C7]">
         <div>
-          <h2 className="text-base font-semibold text-slate-100 font-mono flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-400" />
-            Reliability Incidents &amp; Triage ({filteredIncidents.length})
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Auto-created incidents from pipeline failures and degraded quality scans with AI root-cause analysis.
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="w-5 h-5 text-[#B77936]" />
+            <h2 className="text-base font-semibold text-[#17263F]">
+              Issues Management ({filteredIncidents.length})
+            </h2>
+          </div>
+          <p className="text-xs text-[#667085] mt-1">
+            Data quality breaches, pipeline validation halts, and explainable root-cause insights.
           </p>
         </div>
 
         {/* Filters */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Status Filter */}
-          <div className="flex items-center gap-1 bg-navy-950 p-1 rounded-lg border border-slate-800 text-xs">
+          <div className="flex items-center gap-1 bg-[#FBF9F5] p-1 rounded-lg border border-[#D8D2C7] text-xs">
             {['ALL', 'OPEN', 'INVESTIGATING', 'RESOLVED'].map((st) => (
               <button
                 key={st}
                 onClick={() => setFilterStatus(st)}
-                className={`px-2.5 py-1 rounded font-mono text-[11px] transition ${
+                className={`px-2.5 py-1 rounded transition text-xs font-medium ${
                   filterStatus === st
-                    ? 'bg-slate-800 text-teal-300 font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#17263F] text-white shadow-xs'
+                    : 'text-[#667085] hover:text-[#17263F] hover:bg-[#E9E5DC]'
                 }`}
               >
-                {st}
+                {st === 'ALL' ? 'All' : st.charAt(0) + st.slice(1).toLowerCase()}
               </button>
             ))}
           </div>
 
-          {/* Severity Filter */}
+          {/* Severity Filter Dropdown */}
           <select
             value={filterSeverity}
             onChange={(e) => setFilterSeverity(e.target.value)}
-            className="bg-navy-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-300 focus:outline-none focus:ring-1 focus:ring-teal-400"
+            className="bg-[#FBF9F5] border border-[#D8D2C7] rounded-lg px-2.5 py-1.5 text-xs text-[#253248] focus:outline-none focus:ring-1 focus:ring-[#167D80]"
           >
             <option value="ALL">All Severities</option>
             <option value="CRITICAL">Critical</option>
@@ -124,13 +126,13 @@ export default function IncidentBoard({
         </div>
       </div>
 
-      {/* Incidents List */}
+      {/* Incidents / Issues List */}
       {filteredIncidents.length === 0 ? (
-        <div className="text-center py-12 border border-dashed border-slate-800 rounded-xl bg-navy-950/40">
-          <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-2 opacity-80" />
-          <h4 className="text-sm font-semibold text-slate-200">No Incidents Found</h4>
-          <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-            All data pipelines and datasets within this filter criteria are operating within SLA tolerances.
+        <div className="text-center py-12 border border-dashed border-[#D8D2C7] rounded-xl bg-[#FBF9F5]">
+          <CheckCircle className="w-10 h-10 text-[#167D80] mx-auto mb-2 opacity-80" />
+          <h4 className="text-sm font-semibold text-[#17263F]">No Issues Found</h4>
+          <p className="text-xs text-[#667085] mt-1 max-w-sm mx-auto">
+            All data pipelines and datasets within this filter criteria are operating within expected SLA tolerances.
           </p>
         </div>
       ) : (
@@ -143,60 +145,81 @@ export default function IncidentBoard({
             return (
               <div
                 key={id}
-                className="bg-navy-950/90 border border-slate-800 rounded-xl p-5 hover:border-slate-700/80 transition shadow-md shadow-navy-950/60 space-y-4"
+                className="bg-[#FBF9F5] border border-[#D8D2C7] rounded-xl p-5 hover:border-[#167D80]/60 transition-all shadow-xs space-y-3.5"
               >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 flex-wrap">
                     {getSeverityBadge(incident.severity)}
                     {getStatusBadge(incident.status)}
-                    <h3 className="text-sm font-semibold text-slate-100 font-mono">
+                    <h3 className="text-sm font-semibold text-[#17263F]">
                       {incident.title}
                     </h3>
                   </div>
 
-                  <span className="text-xs font-mono text-slate-400 flex items-center gap-1 shrink-0">
+                  <span className="text-xs font-mono text-[#667085] flex items-center gap-1 shrink-0">
                     <Clock className="w-3.5 h-3.5" />
                     {new Date(incident.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                <p className="text-xs text-[#253248] leading-relaxed">
                   {incident.summary}
                 </p>
 
                 {/* Metadata row */}
-                <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-400 pt-2 border-t border-slate-800/80">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-[#667085] pt-2 border-t border-[#D8D2C7]">
                   {incident.sourcePipeline && (
-                    <span>Pipeline: <strong className="text-slate-300">{incident.sourcePipeline}</strong></span>
+                    <span className="flex items-center gap-1">
+                      <Layers className="w-3.5 h-3.5 text-[#167D80]" />
+                      Pipeline: <strong className="text-[#17263F]">{incident.sourcePipeline}</strong>
+                    </span>
                   )}
                   {incident.datasetName && (
-                    <span>Dataset: <strong className="text-slate-300">{incident.datasetName}</strong></span>
+                    <span className="flex items-center gap-1">
+                      <FileSpreadsheet className="w-3.5 h-3.5 text-[#167D80]" />
+                      Dataset: <strong className="text-[#17263F]">{incident.datasetName}</strong>
+                    </span>
                   )}
                   {incident.details?.qualityScore && (
-                    <span>Score: <strong className="text-rose-400">{incident.details.qualityScore}%</strong></span>
+                    <span>
+                      Score: <strong className="text-[#B94A48]">{incident.details.qualityScore}%</strong>
+                    </span>
                   )}
                   {incident.resolvedAt && (
-                    <span className="text-emerald-400">Resolved at {new Date(incident.resolvedAt).toLocaleTimeString()}</span>
+                    <span className="text-[#167D80] font-medium">
+                      Resolved at {new Date(incident.resolvedAt).toLocaleTimeString()}
+                    </span>
                   )}
                 </div>
 
                 {/* Action Bar */}
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                  {/* Status Toggle Dropdown */}
-                  <div className="flex items-center gap-2 text-xs font-mono">
-                    <span className="text-slate-400">Update Status:</span>
-                    <select
-                      value={incident.status}
-                      onChange={(e) => onUpdateStatus(id, { status: e.target.value })}
-                      className="bg-navy-900 border border-slate-700 rounded-md px-2 py-1 text-slate-200 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-teal-400"
+                  {/* Quick Status Action Buttons */}
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-[#667085] font-medium">Status:</span>
+                    <button
+                      onClick={() => onUpdateStatus(id, { status: 'INVESTIGATING' })}
+                      className={`px-2.5 py-1 rounded text-xs transition border ${
+                        incident.status === 'INVESTIGATING'
+                          ? 'bg-[#B77936] text-white border-[#B77936] font-medium'
+                          : 'bg-[#F7F4ED] text-[#253248] border-[#D8D2C7] hover:bg-[#E9E5DC]'
+                      }`}
                     >
-                      <option value="OPEN">Open</option>
-                      <option value="INVESTIGATING">Investigating</option>
-                      <option value="RESOLVED">Resolved</option>
-                    </select>
+                      Investigate
+                    </button>
+                    <button
+                      onClick={() => onUpdateStatus(id, { status: 'RESOLVED' })}
+                      className={`px-2.5 py-1 rounded text-xs transition border ${
+                        incident.status === 'RESOLVED'
+                          ? 'bg-[#167D80] text-white border-[#167D80] font-medium'
+                          : 'bg-[#F7F4ED] text-[#253248] border-[#D8D2C7] hover:bg-[#E9E5DC]'
+                      }`}
+                    >
+                      Mark Resolved
+                    </button>
                   </div>
 
-                  {/* AI Explain Button */}
+                  {/* Explain Issue Button */}
                   <Button
                     size="sm"
                     variant={hasExistingAI ? 'outline' : 'primary'}
@@ -213,7 +236,7 @@ export default function IncidentBoard({
                     loading={isExplaining}
                     icon={Sparkles}
                   >
-                    {isExplaining ? 'Analyzing Root Cause...' : hasExistingAI ? 'View AI Root Cause' : 'Analyze with AI'}
+                    {isExplaining ? 'Analyzing Root Cause...' : hasExistingAI ? 'View Explanation' : 'Explain Issue'}
                   </Button>
                 </div>
               </div>
@@ -222,17 +245,17 @@ export default function IncidentBoard({
         </div>
       )}
 
-      {/* AI Root Cause Explanation Modal */}
+      {/* Structured Explanation Panel Modal */}
       {activeExplainModal && (
         <Modal
           isOpen={Boolean(activeExplainModal)}
           onClose={() => setActiveExplainModal(null)}
-          title={`Root Cause Analysis: ${activeExplainModal.incident.title}`}
+          title={`Issue Analysis: ${activeExplainModal.incident.title}`}
           maxWidth="max-w-3xl"
         >
-          <div className="space-y-5 text-xs font-sans text-slate-300">
+          <div className="space-y-5 text-xs text-[#253248]">
             {/* Engine Provider Badge */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-3 border-b border-[#D8D2C7]">
               <div className="flex items-center gap-2">
                 <Badge
                   variant={activeExplainModal.explanation.provider === 'GEMINI_API' ? 'primary' : 'success'}
@@ -241,90 +264,91 @@ export default function IncidentBoard({
                   <Sparkles className="w-3 h-3" />
                   Engine: {activeExplainModal.explanation.provider}
                 </Badge>
-                <span className="text-[11px] text-slate-400 font-mono">
-                  Guaranteed Zero-Hallucination Sandbox
+                <span className="text-[11px] text-[#667085]">
+                  {activeExplainModal.explanation.provider === 'GEMINI_API'
+                    ? 'Verified Gemini LLM Analysis'
+                    : 'Factual Deterministic Rule-Based Fallback'}
                 </span>
               </div>
 
-              <span className="text-[11px] text-slate-400 font-mono">
+              <span className="text-[11px] text-[#667085] font-mono">
                 {new Date(activeExplainModal.explanation.generatedAt || Date.now()).toLocaleTimeString()}
               </span>
             </div>
 
-            {/* Root Cause Card */}
-            <div className="bg-navy-950 p-4 rounded-xl border border-slate-800 space-y-2">
-              <h4 className="text-xs font-mono uppercase tracking-wider text-teal-400 font-semibold flex items-center gap-1.5">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
-                Root Cause Synthesis
+            {/* 1. What Happened? */}
+            <div className="bg-[#FBF9F5] p-4 rounded-xl border border-[#D8D2C7] space-y-1.5">
+              <h4 className="text-xs uppercase tracking-wider text-[#167D80] font-semibold flex items-center gap-1.5">
+                <Info className="w-4 h-4 text-[#167D80]" />
+                What Happened?
               </h4>
-              <p className="text-slate-200 leading-relaxed font-mono text-xs">
+              <p className="text-[#253248] leading-relaxed">
+                {activeExplainModal.incident.summary}
+              </p>
+            </div>
+
+            {/* 2. Why Did It Happen? (Root Cause Synthesis) */}
+            <div className="bg-[#FDF8F3] p-4 rounded-xl border border-[#B77936]/30 space-y-1.5">
+              <h4 className="text-xs uppercase tracking-wider text-[#B77936] font-semibold flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-[#B77936]" />
+                Why Did It Happen? (Root Cause)
+              </h4>
+              <p className="text-[#253248] leading-relaxed font-mono text-[11px]">
                 {activeExplainModal.explanation.rootCause}
               </p>
             </div>
 
-            {/* Impact Assessment */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
-                Business &amp; Pipeline Impact
+            {/* 3. What Is The Impact? */}
+            <div className="space-y-1.5">
+              <h4 className="text-xs uppercase tracking-wider text-[#667085] font-semibold">
+                What Is The Impact?
               </h4>
-              <p className="text-slate-300 leading-relaxed">
+              <p className="text-[#253248] leading-relaxed">
                 {activeExplainModal.explanation.impactSummary}
               </p>
-            </div>
-
-            {/* Affected Downstream Consumers */}
-            {activeExplainModal.explanation.affectedDownstream && activeExplainModal.explanation.affectedDownstream.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
-                  Affected Downstream Systems
-                </h4>
-                <div className="flex flex-wrap gap-2">
+              {activeExplainModal.explanation.affectedDownstream && activeExplainModal.explanation.affectedDownstream.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
                   {activeExplainModal.explanation.affectedDownstream.map((sys, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-teal-300 font-mono text-xs"
+                      className="px-2.5 py-0.5 rounded bg-[#E9E5DC] text-[#17263F] border border-[#D8D2C7] font-medium text-[11px]"
                     >
                       {sys}
                     </span>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
-            {/* Recommended Fixes */}
+            {/* 4. What Should Be Fixed? (Recommended Fixes) */}
             {activeExplainModal.explanation.recommendedFixes && activeExplainModal.explanation.recommendedFixes.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
-                  Recommended Engineering Remediation
+              <div className="space-y-2 pt-2 border-t border-[#D8D2C7]">
+                <h4 className="text-xs uppercase tracking-wider text-[#667085] font-semibold">
+                  What Should Be Fixed?
                 </h4>
                 <div className="space-y-2">
                   {activeExplainModal.explanation.recommendedFixes.map((fix, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between p-3 rounded-lg bg-navy-950 border border-slate-800 text-xs font-mono text-slate-300"
+                      className="p-3 bg-[#FBF9F5] border border-[#D8D2C7] rounded-lg text-xs flex items-start justify-between gap-3"
                     >
-                      <span className="flex-1 pr-4">{fix}</span>
+                      <span className="text-[#253248] font-mono text-[11px] leading-relaxed">
+                        {fix}
+                      </span>
                       <button
                         onClick={() => copyFix(fix, idx)}
-                        className="p-1 rounded text-slate-400 hover:text-white transition shrink-0"
-                        title="Copy recommendation"
+                        className="p-1 rounded text-[#667085] hover:text-[#17263F] hover:bg-[#E9E5DC] transition shrink-0"
+                        title="Copy fix recommendation"
                       >
-                        {copiedIndex === idx ? <Check className="w-3.5 h-3.5 text-teal-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedIndex === idx ? (
+                          <Check className="w-4 h-4 text-[#167D80]" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {/* Verified Facts Table */}
-            {activeExplainModal.explanation.verifiedFindings && (
-              <div className="bg-navy-950/60 p-3 rounded-lg border border-slate-800/80 text-[11px] font-mono text-slate-400 space-y-1">
-                <div className="font-bold text-slate-300 uppercase">Verified Telemetry Facts (Ground Truth)</div>
-                <div>Dataset: {activeExplainModal.explanation.verifiedFindings.dataset}</div>
-                <div>Duplicate Rows: {activeExplainModal.explanation.verifiedFindings.duplicateRowsCount}</div>
-                <div>Anomalies: {activeExplainModal.explanation.verifiedFindings.anomaliesCount}</div>
-                <div>Missing Columns: {activeExplainModal.explanation.verifiedFindings.missingColumns?.join(', ') || 'None'}</div>
               </div>
             )}
 

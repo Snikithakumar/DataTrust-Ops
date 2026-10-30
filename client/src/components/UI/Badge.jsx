@@ -1,14 +1,14 @@
 import React from 'react';
 
 const variantClasses = {
-  healthy: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
-  success: 'bg-teal-500/10 text-teal-300 border border-teal-500/30',
-  warning: 'bg-amber-500/10 text-amber-400 border border-amber-500/30',
-  critical: 'bg-rose-500/10 text-rose-400 border border-rose-500/30 animate-pulse',
-  danger: 'bg-red-500/10 text-red-400 border border-red-500/30',
-  info: 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30',
-  neutral: 'bg-slate-800 text-slate-300 border border-slate-700',
-  primary: 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/30'
+  healthy: 'bg-[#8FD2C4]/25 text-[#167D80] border border-[#8FD2C4]',
+  success: 'bg-[#8FD2C4]/25 text-[#167D80] border border-[#8FD2C4]',
+  warning: 'bg-[#B77936]/15 text-[#B77936] border border-[#B77936]/40',
+  critical: 'bg-[#B94A48]/15 text-[#B94A48] border border-[#B94A48]/40 font-semibold',
+  danger: 'bg-[#B94A48]/15 text-[#B94A48] border border-[#B94A48]/40',
+  info: 'bg-[#167D80]/15 text-[#167D80] border border-[#167D80]/30',
+  neutral: 'bg-[#E9E5DC] text-[#253248] border border-[#D8D2C7]',
+  primary: 'bg-[#17263F]/10 text-[#17263F] border border-[#17263F]/25'
 };
 
 export default function Badge({ children, variant = 'neutral', size = 'sm', className = '' }) {
