@@ -1,0 +1,11 @@
+customer_id,full_name,email,signup_date,country,lifetime_value,status
+CUST-1001,Alice Johnson,alice.j@example.com,2026-10-20,US,1420.50,ACTIVE
+CUST-1002,Bob Martinez,bob.m@example.com,2026-10-21,CA,890.00,ACTIVE
+CUST-1003,Charlie Zhao,czhao@example.com,2026-10-22,SG,2340.25,ACTIVE
+CUST-1004,Devi Patel,devi.p@example.com,2026-10-23,IN,3100.00,ACTIVE
+CUST-1005,Elena Rostova,elena.r@example.com,2026-10-24,DE,1750.80,ACTIVE
+CUST-1006,Farhan Al-Mansoor,farhan@example.com,2026-10-25,AE,940.10,ACTIVE
+CUST-1007,Grace Hopper,grace@example.com,2026-10-26,US,4500.00,ACTIVE
+CUST-1008,Hassan El-Sayed,hassan@example.com,2026-10-27,EG,620.40,ACTIVE
+CUST-1009,Isla MacLeod,isla@example.com,2026-10-28,UK,1880.00,ACTIVE
+CUST-1010,Javier Gomez,jgomez@example.com,2026-10-28,MX,1120.90,ACTIVE

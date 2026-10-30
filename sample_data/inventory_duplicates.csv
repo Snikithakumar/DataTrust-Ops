@@ -1,0 +1,11 @@
+warehouse_id,sku,item_name,unit_price,quantity_on_hand,last_audit_date
+WH-EAST-1,SKU-A101,Industrial Sensor A,45.00,120,2026-10-25
+WH-EAST-1,SKU-B202,Edge Gateway Hub,299.50,45,2026-10-25
+WH-EAST-1,SKU-A101,Industrial Sensor A,45.00,120,2026-10-25
+WH-EAST-1,SKU-C303,Thermal Controller,85.20,80,2026-10-26
+WH-EAST-1,SKU-B202,Edge Gateway Hub,299.50,45,2026-10-25
+WH-WEST-2,SKU-D404,Optic Fibre Transceiver,110.00,210,2026-10-26
+WH-WEST-2,SKU-D404,Optic Fibre Transceiver,110.00,210,2026-10-26
+WH-WEST-2,SKU-E505,Power Inverter 500W,175.00,32,2026-10-27
+WH-WEST-2,SKU-E505,Power Inverter 500W,175.00,32,2026-10-27
+WH-CENTRAL-3,SKU-F606,Diagnostic Probe,64.00,95,2026-10-27
