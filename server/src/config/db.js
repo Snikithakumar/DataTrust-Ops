@@ -84,14 +84,28 @@ const getDBStatus = () => {
   const isAtlas = uri.startsWith('mongodb+srv://') || uri.includes('mongodb.net');
   const targetLabel = isAtlas ? 'MongoDB Atlas' : 'Local MongoDB';
 
+  // Redact exact Atlas shard hostname in public API response to prevent info disclosure
+  let hostDisplay = null;
+  if (connected) {
+    hostDisplay = isAtlas ? 'MongoDB Atlas Cloud' : (mongoose.connection.host || 'localhost');
+  }
+
+  // Sanitize lastError so credentials or internal URIs are never exposed
+  let safeLastError = null;
+  if (lastConnectionError) {
+    safeLastError = String(lastConnectionError)
+      .replace(/mongodb(\+srv)?:\/\/[^@]+@/gi, 'mongodb://***:***@')
+      .replace(/:\/\/([^:\s]+):([^@\s]+)@/g, '://***:***@');
+  }
+
   return {
     state: states[state] || 'unknown',
     connected,
     mode: connected ? targetLabel : 'in-memory-fallback',
     target: targetLabel,
-    host: connected ? mongoose.connection.host : null,
+    host: hostDisplay,
     name: connected ? mongoose.connection.name : null,
-    lastError: lastConnectionError,
+    lastError: safeLastError,
     fallbackActive: !connected,
     dnsServers: ['1.1.1.1', '1.0.0.1'],
     guidance: connected

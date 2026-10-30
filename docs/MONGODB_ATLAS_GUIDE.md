@@ -1,4 +1,4 @@
-# MongoDB Atlas Configuration Guide
+﻿# MongoDB Atlas Configuration Guide
 
 DataTrust Ops strictly respects database persistence. If MongoDB is unavailable, the application clearly indicates this state in `/api/health` and displays the `MongoAlertBanner` in the UI, rather than silently faking database persistence.
 
@@ -19,7 +19,10 @@ DataTrust Ops strictly respects database persistence. If MongoDB is unavailable,
    - Assign user privileges: **Read and write to any database**.
 2. Under **Security** -> **Network Access**:
    - Click **Add IP Address**.
-   - Click **Allow Access from Anywhere** (`0.0.0.0/0`) for development/hackathon testing, or add your current IP address.
+   - Click **Allow Access from Anywhere** (`0.0.0.0/0`) strictly for initial development / hackathon evaluation.
+
+> âš ï¸ **Production Security Notice**:
+> `0.0.0.0/0` is permitted **only for temporary development or hackathon evaluation**. For staging and production deployments, network access must be restricted to specific trusted server IP addresses, CIDR blocks, or AWS/GCP/Azure VPC Peering / Private Endpoints to prevent perimeter exposure.
 
 ### Step 3: Copy Your Connection String
 1. In the Atlas dashboard, navigate to **Database** -> **Deployment** -> **Databases**.
@@ -50,7 +53,7 @@ DataTrust Ops strictly respects database persistence. If MongoDB is unavailable,
        "status": "HEALTHY",
        "database": {
          "connected": true,
-         "host": "cluster0.abcde.mongodb.net",
+         "host": "MongoDB Atlas Cloud",
          "name": "datatrustops"
        }
      }

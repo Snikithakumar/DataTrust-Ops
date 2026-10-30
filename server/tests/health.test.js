@@ -53,3 +53,58 @@ test('Quality Scan API - POST /api/quality/scan with raw CSV payload', async () 
   assert.ok(scanRes.body.data.findings.missingValuesTotal >= 1);
   assert.ok(typeof scanRes.body.data.score === 'number');
 });
+
+test('Health API - Redacts exact MongoDB Atlas shard hostnames in public response', async () => {
+  const res = await request(app).get('/api/health');
+  assert.equal(res.status, 200);
+  const db = res.body.data.database;
+  if (db && db.host) {
+    // Shard hostnames like ac-euqcwml-shard-00-00.lisb0kp.mongodb.net must never be exposed
+    assert.equal(/shard-\d+/i.test(db.host), false);
+    assert.equal(/mongodb\.net/i.test(db.host), false);
+  }
+});
+
+test('Quality Scan API - Accepts legitimate multipart CSV file upload', async () => {
+  const csvBuffer = Buffer.from('id,name,value\n1,Alpha,100\n2,Beta,200\n');
+  const res = await request(app)
+    .post('/api/quality/scan')
+    .attach('file', csvBuffer, { filename: 'valid_data.csv', contentType: 'text/csv' });
+
+  assert.equal(res.status, 200);
+  assert.equal(res.body.success, true);
+  assert.equal(res.body.data.totalRows, 2);
+});
+
+test('Quality Scan API - Rejects dangerous executable extension even if MIME is text/csv', async () => {
+  const scriptBuffer = Buffer.from('console.log("malicious");');
+  const res = await request(app)
+    .post('/api/quality/scan')
+    .attach('file', scriptBuffer, { filename: 'malicious_script.exe', contentType: 'text/csv' });
+
+  assert.equal(res.status, 400);
+  assert.equal(res.body.success, false);
+  assert.equal(res.body.error.code, 'INVALID_FILE_TYPE');
+});
+
+test('Quality Scan API - Rejects invalid MIME type despite .csv extension', async () => {
+  const payloadBuffer = Buffer.from('%PDF-1.4 dummy content');
+  const res = await request(app)
+    .post('/api/quality/scan')
+    .attach('file', payloadBuffer, { filename: 'fake_invoice.csv', contentType: 'application/pdf' });
+
+  assert.equal(res.status, 400);
+  assert.equal(res.body.success, false);
+  assert.equal(res.body.error.code, 'INVALID_FILE_TYPE');
+});
+
+test('Quality Scan API - Rejects executable binary payload (PE header MZ) in CSV upload', async () => {
+  const peBuffer = Buffer.from([0x4D, 0x5A, 0x90, 0x00, 0x03, 0x00, 0x00, 0x00]);
+  const res = await request(app)
+    .post('/api/quality/scan')
+    .attach('file', peBuffer, { filename: 'trojan.csv', contentType: 'text/csv' });
+
+  assert.equal(res.status, 400);
+  assert.equal(res.body.success, false);
+  assert.equal(res.body.error.code, 'INVALID_FILE_TYPE');
+});

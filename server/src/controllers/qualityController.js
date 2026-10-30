@@ -17,6 +17,31 @@ const scanQuality = async (req, res, next) => {
     let fileSize = 0;
 
     if (req.file) {
+      // Content safety: verify buffer does not contain executable binary headers
+      const buf = req.file.buffer;
+      if (buf && buf.length >= 2) {
+        const isMZ = buf[0] === 0x4D && buf[1] === 0x5A; // DOS MZ / PE executable
+        const isELF = buf.length >= 4 && buf[0] === 0x7F && buf[1] === 0x45 && buf[2] === 0x4C && buf[3] === 0x46; // ELF binary
+        const isMachO = buf.length >= 4 && (
+          (buf[0] === 0xFE && buf[1] === 0xED && buf[2] === 0xFA && buf[3] === 0xCE) ||
+          (buf[0] === 0xFE && buf[1] === 0xED && buf[2] === 0xFA && buf[3] === 0xCF) ||
+          (buf[0] === 0xCE && buf[1] === 0xFA && buf[2] === 0xED && buf[3] === 0xFE) ||
+          (buf[0] === 0xCF && buf[1] === 0xFA && buf[2] === 0xED && buf[3] === 0xFE) ||
+          (buf[0] === 0xCA && buf[1] === 0xFE && buf[2] === 0xBA && buf[3] === 0xBE)
+        );
+
+        if (isMZ || isELF || isMachO) {
+          return res.status(400).json({
+            success: false,
+            error: {
+              code: 'INVALID_FILE_TYPE',
+              message: 'Binary executable signature detected in CSV content. Upload rejected.'
+            },
+            timestamp: new Date().toISOString()
+          });
+        }
+      }
+
       csvContent = req.file.buffer;
       datasetName = req.file.originalname || 'uploaded_dataset.csv';
       fileSize = req.file.size;

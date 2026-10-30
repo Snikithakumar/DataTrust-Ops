@@ -28,6 +28,18 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Handle custom upload file type errors
+  if (err.code === 'INVALID_FILE_TYPE') {
+    return res.status(400).json({
+      success: false,
+      error: {
+        code: 'INVALID_FILE_TYPE',
+        message: err.message
+      },
+      timestamp: new Date().toISOString()
+    });
+  }
+
   // Handle custom validation or bad request errors
   if (err.name === 'ValidationError') {
     return res.status(400).json({

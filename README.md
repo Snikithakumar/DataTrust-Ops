@@ -7,7 +7,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-v24.18+-0d9488.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-v18-06b6d4.svg)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-Navy%20%26%20Teal-0f172a.svg)](https://tailwindcss.com/)
-[![Tests](https://img.shields.io/badge/Tests-29%20Passing-emerald.svg)](server/tests)
+[![Tests](https://img.shields.io/badge/Tests-34%20Passing-emerald.svg)](server/tests)
 
 ---
 
@@ -25,7 +25,7 @@ Modern enterprise dashboards and machine learning models are routinely corrupted
 2. **Decoupled Freshness SLA**: Tracks time elapsed since data creation independently from quality, ensuring stale static tables aren't misdiagnosed as corrupted and fresh corrupted data isn't falsely marked healthy.
 3. **Simulated Pipeline Engine**: Triggers extraction, schema gating, and validation runs with real-time log streaming and error quarantine.
 4. **CSV Quality Gate**: Drag-and-drop CSV validation powered by `Papa Parse` with 5MB security boundaries, detecting empty files, null spikes, and duplicate primary keys.
-5. **AI Root Cause Analysis with Zero-Hallucination Fallback**: Leverages LLM APIs (e.g. Gemini) or a strict deterministic JavaScript rule engine to synthesize root causes strictly bounded to verified findings and log traces.
+5. **AI Root Cause Analysis (Deterministic Active Engine)**: Operates by default with an active `DETERMINISTIC_FALLBACK` JavaScript rule engine that synthesizes root causes strictly bounded to verified findings and log traces with zero hallucination (optional Gemini API key can be configured).
 6. **Graceful Database Resilience**: Connects to MongoDB/Mongoose with automatic in-memory fallback and clear setup guidance for MongoDB Atlas.
 
 ---
@@ -53,10 +53,10 @@ Modern enterprise dashboards and machine learning models are routinely corrupted
 |  [Core Services]                                                                   |
 |  +-------------------------+  +-------------------------+  +---------------------+ |
 |  | Validation Engine       |  | Scoring Engine          |  | AI Explanation Svc  | |
-|  | - Papa Parse streaming  |  | - Completeness (40%)    |  | - Gemini / LLM API  | |
-|  | - Missing values check  |  | - Uniqueness (35%)      |  | - Deterministic Safe| |
-|  | - Duplicate rows check  |  | - Validity (25%)        |  |   Rule Fallback     | |
-|  | - Configurable bounds   |  | - Freshness calculation |  |   (Zero Halluc.)    | |
+|  | - Papa Parse streaming  |  | - Completeness (40%)    |  | - DETERMINISTIC_    | |
+|  | - Missing values check  |  | - Uniqueness (35%)      |  |   FALLBACK (Active) | |
+|  | - Duplicate rows check  |  | - Validity (25%)        |  | - Optional Gemini   | |
+|  | - Configurable bounds   |  | - Freshness calculation |  |   API integration   | |
 |  +-------------------------+  +-------------------------+  +---------------------+ |
 |                                                                                    |
 |  [Pipeline Orchestration Simulation]                                              |
@@ -105,8 +105,8 @@ Detailed mathematical derivations are documented in [docs/SCORING_FORMULA.md](do
 | **CSV Engine** | Papa Parse | 5.4.1 | Stream parsing and delimiter auto-detection |
 | **Upload Safety** | Multer | 1.4.5-lts | In-memory buffer validation with 5MB cap |
 | **Database** | MongoDB + Mongoose | 8.5.1 | Flexible document persistence |
-| **AI Analysis** | Gemini API + Fallback | 1.5-flash | Ground-truth root-cause synthesis |
-| **Testing** | Node.js Test Runner | Native | 29 automated unit & API tests |
+| **AI Analysis** | Deterministic Engine (Active) / Gemini API | 1.0.0 / 1.5-flash | Zero-hallucination ground-truth root-cause synthesis |
+| **Testing** | Node.js Test Runner | Native | 34 automated unit & API tests |
 
 ---
 
@@ -135,7 +135,7 @@ GEMINI_API_KEY=
 LLM_MODEL=gemini-1.5-flash
 MAX_FILE_SIZE_MB=5
 ```
-*(If no `GEMINI_API_KEY` is provided, the platform automatically runs its deterministic fallback engine with zero setup).*
+*(By default, `GEMINI_API_KEY` is empty and the platform operates with its zero-configuration `DETERMINISTIC_FALLBACK` engine active, ensuring 100% factual, zero-hallucination root cause analyses without external dependencies).*
 
 ### 3. Install Dependencies
 Run the installation script from the root workspace:
@@ -147,7 +147,7 @@ npm --prefix client install
 ```
 
 ### 4. Run Automated Backend Tests
-Verify all 29 validation, scoring, circuit-breaker, incident, and health tests pass:
+Verify all 34 validation, scoring, circuit-breaker, incident, security, and health tests pass:
 ```powershell
 npm test
 ```
@@ -337,5 +337,19 @@ This project is licensed under the [MIT License](LICENSE).
 Watch the DataTrust Ops demonstration video:
 
 [Watch Demo Video](https://github.com/Snikithakumar/DataTrust-Ops/blob/main/demo/DataTrustOps_Demo.mp4)
+
+Duration: 2 minutes 59 seconds.
+## Pitch Deck
+
+Explore the DataTrust Ops project presentation:
+
+- [View Pitch Deck (PDF)](pitch_deck/DataTrust-Ops.pdf)
+- [Download Editable Pitch Deck (PPTX)](pitch_deck/DataTrust-Ops.pptx)
+
+## Project Demo
+
+Watch the DataTrust Ops demonstration video:
+
+[Watch Demo Video](demo/DataTrustOps_Demo.mp4)
 
 Duration: 2 minutes 59 seconds.
